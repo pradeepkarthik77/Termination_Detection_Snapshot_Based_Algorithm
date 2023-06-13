@@ -11,7 +11,16 @@ import (
 
 type API1 struct{}
 
+// type msgstruct struct {
+// 	Msg string
+// 	X   int
+// 	K   int
+// }
+
 var statusvar string
+
+var x1 int
+var k1 int
 
 func (a *API1) ReceiveMsg(msg string, reply *string) error {
 	fmt.Printf("P1: ", msg)
@@ -29,6 +38,9 @@ func (a *API1) ReturnStatus(msg string, reply *string) error {
 
 func main() {
 	var reply string
+
+	x1 = 0
+	k1 = 0
 
 	statusvar = "Active"
 
@@ -73,8 +85,6 @@ func main() {
 		}
 	}
 
-	statusvar = "Idle"
-
 	localist := []string{"localhost:4001", "localhost:4002", "localhost:4003", "localhost:4004"}
 	apilist := []string{"API1.ReturnStatus", "API2.ReturnStatus", "API3.ReturnStatus", "API4.ReturnStatus"}
 
@@ -82,6 +92,12 @@ func main() {
 
 	select {
 	case <-time.After(timeout1):
+
+		fmt.Println("Going idle")
+		statusvar = "Idle"
+		x1 = x1 + 1
+		k1 = 1
+
 		for i := 0; i <= 3; i++ {
 			client, err := rpc.DialHTTP("tcp", localist[i])
 
@@ -93,7 +109,9 @@ func main() {
 
 			if reply == "Active" {
 				fmt.Println("All processes are not yet terminated")
-				return
+				for {
+
+				}
 			}
 		}
 	}

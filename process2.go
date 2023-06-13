@@ -82,13 +82,39 @@ func main() {
 		}
 	}
 
-	statusvar2 = "Idle"
-	x2 = x2 + 1
-	k2 = 2
-	fmt.Println("Hello Reached Here", statusvar2)
+	localist := []string{"localhost:4001", "localhost:4002", "localhost:4003", "localhost:4004"}
+	apilist := []string{"API1.ReturnStatus", "API2.ReturnStatus", "API3.ReturnStatus", "API4.ReturnStatus"}
 
-	// timeout1 := 10 * time.Second
+	timeout1 := 10 * time.Second
+
+	select {
+	case <-time.After(timeout1):
+		statusvar2 = "Idle"
+		x2 = x2 + 1
+		k2 = 2
+		fmt.Println("Hello Reached Here", statusvar2)
+		for i := 0; i <= 3; i++ {
+			client, err := rpc.DialHTTP("tcp", localist[i])
+
+			if err != nil {
+				log.Fatal("Connection error: ", err)
+			}
+
+			client.Call(apilist[i], "", &reply)
+
+			if reply == "Active" {
+				fmt.Println("All processes are not yet terminated")
+				for {
+
+				}
+			}
+		}
+	}
+
+	fmt.Println("All processes are terminated and all local snapshots are recorded")
+
 	for {
+
 	}
 
 }
